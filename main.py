@@ -25,33 +25,38 @@ def start(bot, update):
 
 
 def set(bot, update, args):
-    """Adds a job to the queue"""
-    keyboard=[[]]
-    chat_id = update.message.chat_id
     lunarg=len(args)
-    ind=""
-    print(len(args))
-    a1 = args[0]
-    ind = 'https://www.lefrecce.it/msite/api/geolocations/locations?name=' + a1
-    if(lunarg>1):   
-        for i in range(1, lunarg):
-            ind= ind+ "%20" + args[i]
-    print(ind)
-    r = requests.get(ind)
-    risp=r.text
-    print risp
-    d = json.loads(risp)
-    lungh=len(d)
-    print(lungh)
-    if (lungh==1):
-        cit= d[0]['name']
-        update.message.reply_text("Citta' salvata: "  + cit)
+    chat_id = update.message.chat_id
+    if (lunarg>0):
+        keyboard=[[]]
+        ind=""
+        a1 = args[0]
+        ind = 'https://www.lefrecce.it/msite/api/geolocations/locations?name=' + a1
+        if(lunarg>1):   
+            for i in range(1, lunarg):
+                ind= ind+ "%20" + args[i]
+        print(ind)
+        r = requests.get(ind)
+        risp=r.text
+        print risp
+        d = json.loads(risp)
+        lungh=len(d)
+        print(lungh)
+        if(lungh>0):
+            if (lungh==1):
+                cit= d[0]['name']
+                update.message.reply_text("Citta' salvata: "  + cit)
+            else:
+                for i in range(0, lungh):
+                    cit= d[i]['name']
+                    keyboard.append([InlineKeyboardButton(cit, callback_data=cit)])
+                reply_markup = InlineKeyboardMarkup(keyboard)
+                update.message.reply_text('Please choose:', reply_markup=reply_markup)
+        else:
+            update.message.reply_text('Nessuna stazione corrispondente, riprova!')
     else:
-        for i in range(0, lungh):
-            cit= d[i]['name']
-            keyboard.append([InlineKeyboardButton(cit, callback_data=cit)])
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        update.message.reply_text('Please choose:', reply_markup=reply_markup)
+        update.message.reply_text('Inserisci un valore valido!')
+        
 
 
 def button(bot, update):
@@ -77,7 +82,7 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", start))
     dp.add_handler(CallbackQueryHandler(button))
-    dp.add_handler(CommandHandler("set", set,
+    dp.add_handler(CommandHandler("Partenza", set,
                                   pass_args=True))
 
     # log all errors
