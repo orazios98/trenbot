@@ -100,7 +100,8 @@ def seta(bot, update, args):
     else:
         update.message.reply_text('Inserisci un valore valido!')
         
-
+def cerca(bot,update):
+    
 
 def printp(bot, update):
     chat_id = update.message.chat_id
@@ -144,6 +145,7 @@ def main():
     dp.add_handler(CommandHandler("help", start))
     dp.add_handler(CommandHandler("stampap", printp))
     dp.add_handler(CommandHandler("stampaA", printa))
+    dp.add_handler(CommandHandler("andata", cerca))
     dp.add_handler(CallbackQueryHandler(button))
     dp.add_handler(CommandHandler("setp", setp,
                                   pass_args=True))
